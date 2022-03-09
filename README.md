@@ -1,6 +1,6 @@
 # Laboratorul 3-5
 
-Fiecare student își alege o problemă. Folosiți arhitectură stratificată cu domain, UI, service, repository. Tema se întinde pe 3 săptămâni (3 iterații).
+Fiecare student își alege o problemă. Folosiți arhitectură stratificată cu com.ubb.postuniv.domain, UI, service, repository. Tema se întinde pe 3 săptămâni (3 iterații).
 
 1. Prima iterație (săptămâna 3): toate funcționalitățile CRUD, interfață de consolă, excepții. 
 2. A doua iterație (săptămâna 4): minim 2 funcționalități non-CRUD, repository generic.
