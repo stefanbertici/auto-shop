@@ -37,6 +37,10 @@ public class ClientCard {
         return cnp;
     }
 
+    public void setCnp(String cnp) {
+        this.cnp = cnp;
+    }
+
     public LocalDate getBirthDate() {
         return birthDate;
     }

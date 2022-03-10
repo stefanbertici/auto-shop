@@ -45,6 +45,12 @@ public class ClientCardService {
         cardRepository.update(card);
     }
 
+    public void resetCnpInCaseItDoesNotChangeAtUpdate(String id) {
+        ClientCard card = cardRepository.readById(id);
+        card.setCnp("");
+        cardRepository.update(card);
+    }
+
     //delete
     public void delete(String id) throws RuntimeException {
         cardRepository.delete(id);

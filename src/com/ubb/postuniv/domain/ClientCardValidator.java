@@ -23,17 +23,16 @@ public class ClientCardValidator {
         }
     }
 
-    public void validateCnpForUpdate(String cnp) throws RuntimeException {
+    public void validateCnp(String cnp) throws RuntimeException {
         ClientCard card = cardRepository.readByCnp(cnp);
-        if (card == null) {
-            throw new RuntimeException("Error: There is no card with cnp " + cnp);
+        if (card != null) {
+            throw new RuntimeException("Error: There already is a card with cnp " + cnp);
         }
     }
 
-    public void validateCnpForAdd(String cnp) throws RuntimeException {
-        ClientCard card = cardRepository.readById(cnp);
-        if (card != null) {
-            throw new RuntimeException("Error: There already is a card with cnp " + cnp);
+    public void validateNameFormat(String name) {
+        if (name.equals("")) {
+            throw new RuntimeException("Error: Name cannot be empty string.");
         }
     }
 }

@@ -1,15 +1,13 @@
 package com.ubb.postuniv.userInterface;
 
-import com.ubb.postuniv.domain.Car;
-import com.ubb.postuniv.domain.CarValidator;
-import com.ubb.postuniv.domain.ClientCardValidator;
-import com.ubb.postuniv.domain.TransactionValidator;
+import com.ubb.postuniv.domain.*;
 import com.ubb.postuniv.service.CarService;
 import com.ubb.postuniv.service.ClientCardService;
 import com.ubb.postuniv.service.TransactionService;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class TextUI {
@@ -64,7 +62,7 @@ public class TextUI {
                         }
                     }
                 }
-                /*ccase "2" -> {
+                case "2" -> {
                     subMenu = true;
                     while (subMenu) {
                         printClientCardSubMenu();
@@ -107,6 +105,218 @@ public class TextUI {
                 default -> System.out.println("Please choose a valid option.");
             }
         }
+    }
+
+    private void deleteClientCard() {
+        String id;
+
+        do {
+            System.out.print("Enter existing client card's id: ");
+            id = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateIdForUpdate(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        clientCardService.delete(id);
+        System.out.println("Deleted!");
+    }
+
+    private void updateClientCard() {
+        String id, firstName, lastName, cnp, input;
+        LocalDate birthDate, registrationDate;
+
+        do {
+            System.out.print("Enter existing client's card id (needs to be unique): ");
+            id = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateIdForUpdate(id);
+                clientCardService.resetCnpInCaseItDoesNotChangeAtUpdate(id); // if we update a client card but want to keep its own cnp
+                break;                                                       // we need to reset the cnp so the old one passes validator
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's first name (needs to be a string): ");
+            firstName = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateNameFormat(firstName);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's last name (needs to be a string): ");
+            lastName = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateNameFormat(lastName);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's CNP (needs to be unique): ");
+            cnp = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateCnp(cnp);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's birth date (\"dd.mm.yyyy\"): ");
+            input = scanner.nextLine();
+
+            try {
+                birthDate = LocalDate.parse(input, formatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's registration date (\"dd.mm.yyyy\"): ");
+            input = scanner.nextLine();
+
+            try {
+                registrationDate = LocalDate.parse(input, formatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
+            }
+        } while (true);
+
+        clientCardService.update(id, firstName, lastName, cnp, birthDate, registrationDate);
+        System.out.println("Added!");
+    }
+
+    private void printClientCard() {
+        String id;
+
+        do {
+            System.out.print("Enter existing client card's id: ");
+            id = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateIdForUpdate(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        System.out.println("""
+                -------------------------------------
+                |     CLIENT CARD FOUND BY ID       |
+                -------------------------------------""");
+        System.out.println(clientCardService.get(id));
+    }
+
+    private void printClientCards() {
+        System.out.println("""
+                -------------------------------------
+                |   ALL CLIENT CARDS ORDERED BY ID  |
+                -------------------------------------""");
+        for (ClientCard clientCard : clientCardService.getAll()) {
+            System.out.println(clientCard);
+        }
+    }
+
+    private void addClientCard() {
+        String id, firstName, lastName, cnp, input;
+        LocalDate birthDate, registrationDate;
+
+        do {
+            System.out.print("Enter client card id (needs to be unique): ");
+            id = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateIdForAdd(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's first name (needs to be a string): ");
+            firstName = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateNameFormat(firstName);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's last name (needs to be a string): ");
+            lastName = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateNameFormat(lastName);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's CNP (needs to be unique): ");
+            cnp = scanner.nextLine();
+
+            try {
+                clientCardValidator.validateCnp(cnp);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's birth date (\"dd.mm.yyyy\"): ");
+            input = scanner.nextLine();
+
+            try {
+                birthDate = LocalDate.parse(input, formatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client's registration date (\"dd.mm.yyyy\"): ");
+            input = scanner.nextLine();
+
+            try {
+                registrationDate = LocalDate.parse(input, formatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
+            }
+        } while (true);
+
+        clientCardService.add(id, firstName, lastName, cnp, birthDate, registrationDate);
+        System.out.println("Added!");
     }
 
     private void deleteCar() {
@@ -320,7 +530,7 @@ public class TextUI {
                 | 3. Print car by id.               |
                 | 4. Update a car's info.           |
                 | 5. Delete a car.                  |
-                | 0. Exit.                          |
+                | 0. Back.                          |
                 -------------------------------------
                """);
     }
@@ -335,7 +545,7 @@ public class TextUI {
                 | 3. Print client card by id.       |
                 | 4. Update a client card's info.   |
                 | 5. Delete a client card.          |
-                | 0. Exit.                          |
+                | 0. Back.                          |
                 -------------------------------------
                """);
     }
@@ -350,7 +560,7 @@ public class TextUI {
                 | 3. Print transaction by id.       |
                 | 4. Update a transaction's info.   |
                 | 5. Delete a transaction.          |
-                | 0. Exit.                          |
+                | 0. Back.                          |
                 -------------------------------------
                """);
     }

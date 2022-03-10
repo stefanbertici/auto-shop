@@ -11,6 +11,7 @@ import com.ubb.postuniv.service.ClientCardService;
 import com.ubb.postuniv.service.TransactionService;
 import com.ubb.postuniv.userInterface.TextUI;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 
@@ -35,19 +36,8 @@ public class Main {
 
         carService.add("1", "yaris", 2020, 1000, true);
         carService.add("2", "corolla", 2010, 90000, false);
-
-        /*
-        LocalDate birthDate = LocalDate.parse("12.03.1993", formatter);
-        LocalDate regDate = LocalDate.parse("01.01.2019", formatter);
-        clientCardService.add("1", "Stefan" , "Bertici", "109329382477", birthDate, regDate);
-
-        transactionService.add("1", "1", "", 1000, 500, LocalDateTime.now());
-        transactionService.add("2", "2", "1", 1000, 500, LocalDateTime.now());
-
-        System.out.println(carService.getAll());
-        System.out.println(clientCardService.getAll());
-        System.out.println(transactionService.getAll());
-        */
+        clientCardService.add("1", "Stefan", "Bertici", "199921", LocalDate.parse("12.03.1993", formatter), LocalDate.parse("01.01.2022", formatter));
+        clientCardService.add("2", "test", "test", "999", LocalDate.parse("12.03.1993", formatter), LocalDate.parse("01.01.2022", formatter));
 
         ui.start();
     }
