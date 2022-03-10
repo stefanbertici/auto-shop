@@ -1,15 +1,18 @@
 package com.ubb.postuniv.domain;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 public class ClientCard {
     // id, nume, prenume, CNP, data nașterii (`dd.mm.yyyy`), data înregistrării (`dd.mm.yyyy`). CNP-ul trebuie să fie unic.
     private String id;
     private String firstName;
     private String lastName;
     private String cnp;
-    private String birthDate;
-    private String registrationDate;
+    private LocalDate birthDate;
+    private LocalDate registrationDate;
 
-    public ClientCard(String id, String firstName, String lastName, String cnp, String birthDate, String registrationDate) {
+    public ClientCard(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,11 +37,11 @@ public class ClientCard {
         return cnp;
     }
 
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public String getRegistrationDate() {
+    public LocalDate getRegistrationDate() {
         return registrationDate;
     }
 

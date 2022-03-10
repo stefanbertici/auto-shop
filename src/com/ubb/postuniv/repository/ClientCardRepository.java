@@ -28,8 +28,18 @@ public class ClientCardRepository {
         return new ArrayList<>(cards.values());
     }
 
-    public ClientCard read(String id) {
+    public ClientCard readById(String id) {
         return cards.getOrDefault(id, null);
+    }
+
+    public ClientCard readByCnp(String cnp) {
+        for (ClientCard card : cards.values()) {
+            if (card.getCnp().equals(cnp)) {
+                return card;
+            }
+        }
+
+        return null;
     }
 
     //update

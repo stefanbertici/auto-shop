@@ -3,6 +3,7 @@ package com.ubb.postuniv.service;
 import com.ubb.postuniv.domain.ClientCard;
 import com.ubb.postuniv.repository.ClientCardRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,7 +16,7 @@ public class ClientCardService {
     }
 
     //add
-    public void add(String id, String firstName, String lastName, String cnp, String birthDate, String registrationDate) throws RuntimeException{
+    public void add(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws RuntimeException{
         ClientCard card = new ClientCard(id, firstName, lastName, cnp, birthDate, registrationDate);
         cardRepository.create(card);
     }
@@ -35,11 +36,11 @@ public class ClientCardService {
 
     //get a card by id
     public ClientCard get(String id) {
-        return cardRepository.read(id);
+        return cardRepository.readById(id);
     }
 
     //update
-    public void update(String id, String firstName, String lastName, String cnp, String birthDate, String registrationDate) throws RuntimeException{
+    public void update(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws RuntimeException{
         ClientCard card = new ClientCard(id, firstName, lastName, cnp, birthDate, registrationDate);
         cardRepository.update(card);
     }

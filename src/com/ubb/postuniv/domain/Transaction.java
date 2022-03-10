@@ -1,17 +1,21 @@
 package com.ubb.postuniv.domain;
 
+import java.time.LocalDateTime;
+
 public class Transaction {
     // id, id_mașină, id_card_client (poate fi nul), sumă piese, sumă manoperă, data și ora (`dd.mm.yyyy HH:mm`).
     // Dacă există un card client, atunci aplicați o reducere de `10%` pentru manoperă. Dacă mașina este în garanție, atunci piesele sunt gratis.
     // Se tipărește prețul plătit și reducerile acordate.
     private String id;
+    private String carId;
     private String clientCardId;
     private double partPrice;
     private double laborPrice;
-    private String dateAndTime;
+    private LocalDateTime dateAndTime;
 
-    public Transaction(String id, String clientCardId, double partPrice, double laborPrice, String dateAndTime) {
+    public Transaction(String id, String carId,String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime) {
         this.id = id;
+        this.carId = carId;
         this.clientCardId = clientCardId;
         this.partPrice = partPrice;
         this.laborPrice = laborPrice;
@@ -20,6 +24,10 @@ public class Transaction {
 
     public String getId() {
         return id;
+    }
+
+    public String getCarId() {
+        return carId;
     }
 
     public String getClientCardId() {
@@ -34,7 +42,7 @@ public class Transaction {
         return laborPrice;
     }
 
-    public String getDateAndTime() {
+    public LocalDateTime getDateAndTime() {
         return dateAndTime;
     }
 
@@ -42,10 +50,11 @@ public class Transaction {
     public String toString() {
         return "Transaction{" +
                 "id='" + id + '\'' +
+                ", carId='" + carId + '\'' +
                 ", clientCardId='" + clientCardId + '\'' +
                 ", partPrice=" + partPrice +
                 ", laborPrice=" + laborPrice +
-                ", dateAndTime='" + dateAndTime + '\'' +
+                ", dateAndTime=" + dateAndTime +
                 '}';
     }
 }
