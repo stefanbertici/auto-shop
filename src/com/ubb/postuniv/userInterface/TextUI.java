@@ -6,6 +6,7 @@ import com.ubb.postuniv.service.ClientCardService;
 import com.ubb.postuniv.service.TransactionService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -18,11 +19,12 @@ public class TextUI {
     private CarValidator carValidator;
     private ClientCardValidator clientCardValidator;
     private TransactionValidator transactionValidator;
-    private DateTimeFormatter formatter;
+    private DateTimeFormatter dateFormatter;
+    private DateTimeFormatter dateTimeFormatter;
 
     public TextUI(CarService carService, ClientCardService clientCardService, TransactionService transactionService,
                   CarValidator carValidator, ClientCardValidator clientCardValidator, TransactionValidator transactionValidator,
-                  DateTimeFormatter formatter) {
+                  DateTimeFormatter dateFormatter, DateTimeFormatter dateTimeFormatter) {
         scanner = new Scanner(System.in);
         this.carService = carService;
         this.clientCardService = clientCardService;
@@ -30,7 +32,8 @@ public class TextUI {
         this.carValidator = carValidator;
         this.clientCardValidator = clientCardValidator;
         this.transactionValidator = transactionValidator;
-        this.formatter = formatter;
+        this.dateFormatter = dateFormatter;
+        this.dateTimeFormatter = dateTimeFormatter;
     }
 
     public void start() {
@@ -40,7 +43,7 @@ public class TextUI {
 
         while (mainMenu) {
             printMainMenu();
-            System.out.print("~ Please choose an option: ");
+            System.out.print("~ ");
             input = scanner.nextLine();
 
             switch (input) {
@@ -48,7 +51,7 @@ public class TextUI {
                     subMenu = true;
                     while (subMenu) {
                         printCarSubMenu();
-                        System.out.print("~ Please choose an option: ");
+                        System.out.print("~ ");
                         input = scanner.nextLine();
 
                         switch (input) {
@@ -58,7 +61,7 @@ public class TextUI {
                             case "4" -> updateCar();
                             case "5" -> deleteCar();
                             case "0" -> subMenu = false;
-                            default -> System.out.println("Please choose a valid option.");
+                            default -> System.out.println("Error: Please choose a valid option.");
                         }
                     }
                 }
@@ -66,7 +69,7 @@ public class TextUI {
                     subMenu = true;
                     while (subMenu) {
                         printClientCardSubMenu();
-                        System.out.print("~ Please choose an option: ");
+                        System.out.print("~ ");
                         input = scanner.nextLine();
 
                         switch (input) {
@@ -76,15 +79,15 @@ public class TextUI {
                             case "4" -> updateClientCard();
                             case "5" -> deleteClientCard();
                             case "0" -> subMenu = false;
-                            default -> System.out.println("Please choose a valid option.");
+                            default -> System.out.println("Error: Please choose a valid option.");
                         }
                     }
                 }
-                /*case "3" -> {
+                case "3" -> {
                     subMenu = true;
                     while (subMenu) {
                         printTransactionSubMenu();
-                        System.out.print("~ Please choose an option: ");
+                        System.out.print("~ ");
                         input = scanner.nextLine();
 
                         switch (input) {
@@ -94,17 +97,231 @@ public class TextUI {
                             case "4" -> updateTransaction();
                             case "5" -> deleteTransaction();
                             case "0" -> subMenu = false;
-                            default -> System.out.println("Please choose a valid option.");
+                            default -> System.out.println("Error: Please choose a valid option.");
                         }
                     }
-                }*/
+                }
                 case "0" -> {
                     System.out.println("Goodbye!");
                     mainMenu = false;
                 }
-                default -> System.out.println("Please choose a valid option.");
+                default -> System.out.println("Error: Please choose a valid option.");
             }
         }
+    }
+
+    private void deleteTransaction() {
+        String id;
+
+        do {
+            System.out.print("Enter transaction id (needs to be unique): ");
+            id = scanner.nextLine();
+
+            try {
+                transactionValidator.validateIdForAdd(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        transactionService.delete(id);
+        System.out.println("Deleted!");
+    }
+
+    private void updateTransaction() {
+        String id, carId, clientCardId, input;
+        double partPrice, laborPrice;
+        LocalDateTime dateAndTime;
+
+        do {
+            System.out.print("Enter transaction id (needs to be unique): ");
+            id = scanner.nextLine();
+
+            try {
+                transactionValidator.validateIdForUpdate(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter car id (needs to be valid): ");
+            carId = scanner.nextLine();
+
+            try {
+                transactionValidator.validateCarId(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client card id (needs to be blank or valid): ");
+            clientCardId = scanner.nextLine();
+
+            try {
+                transactionValidator.validateClientCardIdWhichCanBeNull(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter the price of parts (needs to be a double): ");
+            input = scanner.nextLine();
+
+            try {
+                partPrice = Double.parseDouble(input);
+                break;
+            } catch (NumberFormatException nfex) {
+                System.out.println("Error: Invalid price format (needs to be a double): " + input);
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter the price of labor (needs to be a double): ");
+            input = scanner.nextLine();
+
+            try {
+                laborPrice = Double.parseDouble(input);
+                break;
+            } catch (NumberFormatException nfex) {
+                System.out.println("Error: Invalid price format (needs to be a double): " + input);
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter the transaction's date and time (\"dd.mm.yyyy HH:mm\"): ");
+            input = scanner.nextLine();
+
+            try {
+                dateAndTime = LocalDateTime.parse(input, dateTimeFormatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid date and time format (\"dd.mm.yyyy HH:mm\"): " + input);
+            }
+        } while (true);
+
+        transactionService.update(id, carId, clientCardId, partPrice, laborPrice, dateAndTime);
+        System.out.println("Updated!");
+
+        printInvoiceHeader();
+        System.out.println(transactionService.getInvoice(carId, clientCardId, partPrice, laborPrice));
+    }
+
+    private void printTransaction() {
+        String id;
+
+        do {
+            System.out.print("Enter transaction id (needs to be unique): ");
+            id = scanner.nextLine();
+
+            try {
+                transactionValidator.validateIdForAdd(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        System.out.println(transactionService.get(id));
+    }
+
+    private void printTransactions() {
+        System.out.println("""
+                -------------------------------------
+                |   ALL TRANSACTIONS ORDERED BY ID  |
+                -------------------------------------""");
+
+        transactionService.getAll().forEach(System.out::println);
+    }
+
+    private void addTransaction() {
+        String id, carId, clientCardId, input;
+        double partPrice, laborPrice;
+        LocalDateTime dateAndTime;
+
+        do {
+            System.out.print("Enter transaction id (needs to be unique): ");
+            id = scanner.nextLine();
+
+            try {
+                transactionValidator.validateIdForAdd(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter car id (needs to be valid): ");
+            carId = scanner.nextLine();
+
+            try {
+                transactionValidator.validateCarId(id);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter client card id (needs to be blank or valid): ");
+            clientCardId = scanner.nextLine();
+
+            try {
+                transactionValidator.validateClientCardIdWhichCanBeNull(clientCardId);
+                break;
+            } catch (RuntimeException rex) {
+                System.out.println(rex.getMessage());
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter the price of parts (needs to be a double): ");
+            input = scanner.nextLine();
+
+            try {
+                partPrice = Double.parseDouble(input);
+                break;
+            } catch (NumberFormatException nfex) {
+                System.out.println("Error: Invalid price format (needs to be a double): " + input);
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter the price of labor (needs to be a double): ");
+            input = scanner.nextLine();
+
+            try {
+                laborPrice = Double.parseDouble(input);
+                break;
+            } catch (NumberFormatException nfex) {
+                System.out.println("Error: Invalid price format (needs to be a double): " + input);
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter the transaction's date and time (\"dd.mm.yyyy HH:mm\"): ");
+            input = scanner.nextLine();
+
+            try {
+                dateAndTime = LocalDateTime.parse(input, dateTimeFormatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid date and time format (\"dd.mm.yyyy HH:mm\"): " + input);
+            }
+        } while (true);
+
+        transactionService.add(id, carId, clientCardId, partPrice, laborPrice, dateAndTime);
+        System.out.println("Added!");
+
+        printInvoiceHeader();
+        System.out.println(transactionService.getInvoice(carId, clientCardId, partPrice, laborPrice));
     }
 
     private void deleteClientCard() {
@@ -184,7 +401,7 @@ public class TextUI {
             input = scanner.nextLine();
 
             try {
-                birthDate = LocalDate.parse(input, formatter);
+                birthDate = LocalDate.parse(input, dateFormatter);
                 break;
             } catch (DateTimeParseException dtpex) {
                 System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
@@ -196,7 +413,7 @@ public class TextUI {
             input = scanner.nextLine();
 
             try {
-                registrationDate = LocalDate.parse(input, formatter);
+                registrationDate = LocalDate.parse(input, dateFormatter);
                 break;
             } catch (DateTimeParseException dtpex) {
                 System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
@@ -234,9 +451,8 @@ public class TextUI {
                 -------------------------------------
                 |   ALL CLIENT CARDS ORDERED BY ID  |
                 -------------------------------------""");
-        for (ClientCard clientCard : clientCardService.getAll()) {
-            System.out.println(clientCard);
-        }
+
+        clientCardService.getAll().forEach(System.out::println);
     }
 
     private void addClientCard() {
@@ -296,10 +512,10 @@ public class TextUI {
             input = scanner.nextLine();
 
             try {
-                birthDate = LocalDate.parse(input, formatter);
+                birthDate = LocalDate.parse(input, dateFormatter);
                 break;
             } catch (DateTimeParseException dtpex) {
-                System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
+                System.out.println("Error: Invalid date format (needs to \"dd.mm.yyyy\"): " + input);
             }
         } while (true);
 
@@ -308,10 +524,10 @@ public class TextUI {
             input = scanner.nextLine();
 
             try {
-                registrationDate = LocalDate.parse(input, formatter);
+                registrationDate = LocalDate.parse(input, dateFormatter);
                 break;
             } catch (DateTimeParseException dtpex) {
-                System.out.println("Error: Invalid year format (needs to \"dd.mm.yyyy\"): " + input);
+                System.out.println("Error: Invalid date format (needs to \"dd.mm.yyyy\"): " + input);
             }
         } while (true);
 
@@ -432,9 +648,8 @@ public class TextUI {
                 -------------------------------------
                 |        ALL CARS ORDERED BY ID      |
                 -------------------------------------""");
-        for (Car car : carService.getAll()) {
-            System.out.println(car);
-        }
+
+        carService.getAll().forEach(System.out::println);
     }
 
     private void addCar() {
@@ -516,8 +731,7 @@ public class TextUI {
                 | 5.   UNDER CONSTRUCTION           |
                 | 6.      -----------               |
                 | 0. Exit.                          |
-                -------------------------------------
-                """);
+                -------------------------------------""");
     }
 
     public void printCarSubMenu() {
@@ -531,8 +745,7 @@ public class TextUI {
                 | 4. Update a car's info.           |
                 | 5. Delete a car.                  |
                 | 0. Back.                          |
-                -------------------------------------
-               """);
+                -------------------------------------""");
     }
 
     private void printClientCardSubMenu() {
@@ -546,8 +759,7 @@ public class TextUI {
                 | 4. Update a client card's info.   |
                 | 5. Delete a client card.          |
                 | 0. Back.                          |
-                -------------------------------------
-               """);
+                -------------------------------------""");
     }
 
     private void printTransactionSubMenu() {
@@ -561,7 +773,13 @@ public class TextUI {
                 | 4. Update a transaction's info.   |
                 | 5. Delete a transaction.          |
                 | 0. Back.                          |
+                -------------------------------------""");
+    }
+
+    private void printInvoiceHeader() {
+        System.out.println("""
                 -------------------------------------
-               """);
+                |              INVOICE              |
+                -------------------------------------""");
     }
 }
