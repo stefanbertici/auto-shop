@@ -1,8 +1,9 @@
 package com.ubb.postuniv.service;
 
+import com.ubb.postuniv.domain.Car;
+import com.ubb.postuniv.domain.Invoice;
 import com.ubb.postuniv.domain.Transaction;
-import com.ubb.postuniv.repository.CarRepository;
-import com.ubb.postuniv.repository.TransactionRepository;
+import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,10 +11,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TransactionService {
-    private TransactionRepository transactionRepository;
-    private CarRepository carRepository;
+    private Repository<Transaction> transactionRepository;
+    private Repository<Car> carRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, CarRepository carRepository) {
+    public TransactionService(Repository<Transaction> transactionRepository, Repository<Car> carRepository) {
         this.transactionRepository = transactionRepository;
         this.carRepository = carRepository;
     }
@@ -56,8 +57,7 @@ public class TransactionService {
         return transactionRepository.read(id);
     }
 
-    public String getInvoice(String carId, String clientCardId, double partPrice, double laborPrice) {
-        StringBuilder sb = new StringBuilder();
+    public Invoice getInvoice(String carId, String clientCardId, double partPrice, double laborPrice) {
         double finalPartPrice, finalLaborPrice;
         double partDiscount, laborDiscount;
 
@@ -77,23 +77,7 @@ public class TransactionService {
             laborDiscount = 0;
         }
 
-        sb.append("Total products and services = $").append(partPrice+laborPrice).append("\n");
-
-        if (partDiscount != 0) {
-            sb.append("Discount: Warranty: -$").append(partDiscount).append("\n");
-        }
-
-        if (laborDiscount != 0) {
-            sb.append("Discount: Client card: -$").append(laborDiscount).append("\n");
-        }
-
-        if (partDiscount == 0 && laborDiscount ==0) {
-            sb.append("Transaction not eligible for discounts.").append(laborDiscount).append("\n");
-        }
-
-        sb.append("Total = $").append(finalPartPrice + finalLaborPrice);
-
-        return sb.toString();
+        return new Invoice(partPrice, laborPrice, partDiscount, laborDiscount, finalPartPrice, finalLaborPrice);
     }
 
     //update

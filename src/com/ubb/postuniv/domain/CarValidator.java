@@ -1,11 +1,11 @@
 package com.ubb.postuniv.domain;
 
-import com.ubb.postuniv.repository.CarRepository;
+import com.ubb.postuniv.repository.Repository;
 
 public class CarValidator {
-    private CarRepository carRepository;
+    private Repository<Car> carRepository;
 
-    public CarValidator(CarRepository carRepository) {
+    public CarValidator(Repository<Car> carRepository) {
         this.carRepository = carRepository;
     }
 

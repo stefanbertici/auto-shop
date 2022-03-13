@@ -1,7 +1,7 @@
 package com.ubb.postuniv.service;
 
 import com.ubb.postuniv.domain.ClientCard;
-import com.ubb.postuniv.repository.ClientCardRepository;
+import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,9 +9,9 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ClientCardService {
-    private ClientCardRepository cardRepository;
+    private Repository<ClientCard> cardRepository;
 
-    public ClientCardService(ClientCardRepository cardRepository) {
+    public ClientCardService(Repository<ClientCard> cardRepository) {
         this.cardRepository = cardRepository;
     }
 
@@ -36,7 +36,7 @@ public class ClientCardService {
 
     //get a card by id
     public ClientCard get(String id) {
-        return cardRepository.readById(id);
+        return cardRepository.read(id);
     }
 
     //update
@@ -46,7 +46,7 @@ public class ClientCardService {
     }
 
     public void resetCnpInCaseItDoesNotChangeAtUpdate(String id) {
-        ClientCard card = cardRepository.readById(id);
+        ClientCard card = cardRepository.read(id);
         card.setCnp("-1");
         cardRepository.update(card);
     }

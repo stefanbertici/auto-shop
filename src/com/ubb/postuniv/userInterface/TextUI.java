@@ -209,8 +209,7 @@ public class TextUI {
         transactionService.update(id, carId, clientCardId, partPrice, laborPrice, dateAndTime);
         System.out.println("Updated!");
 
-        printInvoiceHeader();
-        System.out.println(transactionService.getInvoice(carId, clientCardId, partPrice, laborPrice));
+        printInvoice(transactionService.getInvoice(carId, clientCardId, partPrice, laborPrice));
     }
 
     private void printTransaction() {
@@ -320,8 +319,7 @@ public class TextUI {
         transactionService.add(id, carId, clientCardId, partPrice, laborPrice, dateAndTime);
         System.out.println("Added!");
 
-        printInvoiceHeader();
-        System.out.println(transactionService.getInvoice(carId, clientCardId, partPrice, laborPrice));
+        printInvoice(transactionService.getInvoice(carId, clientCardId, partPrice, laborPrice));
     }
 
     private void deleteClientCard() {
@@ -776,10 +774,36 @@ public class TextUI {
                 -------------------------------------""");
     }
 
-    private void printInvoiceHeader() {
+    private void printInvoice(Invoice invoice) {
         System.out.println("""
                 -------------------------------------
                 |              INVOICE              |
                 -------------------------------------""");
+
+        StringBuilder sb = new StringBuilder();
+        double partPrice = invoice.getPartPrice();
+        double laborPrice = invoice.getLaborPrice();
+        double partDiscount = invoice.getPartDiscount();
+        double laborDiscount = invoice.getLaborDiscount();
+        double finalPartPrice = invoice.getFinalPartPrice();
+        double finalLaborPrice = invoice.getFinalLaborPrice();
+
+        sb.append("Total products and services = $").append(partPrice+laborPrice).append("\n");
+
+        if (partDiscount != 0) {
+            sb.append("Discount: Warranty: -$").append(partDiscount).append("\n");
+        }
+
+        if (laborDiscount != 0) {
+            sb.append("Discount: Client card: -$").append(laborDiscount).append("\n");
+        }
+
+        if (partDiscount == 0 && laborDiscount ==0) {
+            sb.append("Transaction not eligible for discounts.").append(laborDiscount).append("\n");
+        }
+
+        sb.append("Total = $").append(finalPartPrice + finalLaborPrice);
+
+        System.out.println(sb);
     }
 }

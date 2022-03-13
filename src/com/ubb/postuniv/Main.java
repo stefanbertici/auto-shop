@@ -1,11 +1,7 @@
 package com.ubb.postuniv;
 
-import com.ubb.postuniv.domain.CarValidator;
-import com.ubb.postuniv.domain.ClientCardValidator;
-import com.ubb.postuniv.domain.TransactionValidator;
-import com.ubb.postuniv.repository.CarRepository;
-import com.ubb.postuniv.repository.ClientCardRepository;
-import com.ubb.postuniv.repository.TransactionRepository;
+import com.ubb.postuniv.domain.*;
+import com.ubb.postuniv.repository.*;
 import com.ubb.postuniv.service.CarService;
 import com.ubb.postuniv.service.ClientCardService;
 import com.ubb.postuniv.service.TransactionService;
@@ -20,9 +16,9 @@ public class Main {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu").withResolverStyle(ResolverStyle.STRICT);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
-        CarRepository carRepository = new CarRepository();
-        ClientCardRepository clientCardRepository = new ClientCardRepository();
-        TransactionRepository transactionRepository = new TransactionRepository();
+        Repository<Car> carRepository = new InMemoryRepository<>();
+        Repository<ClientCard> clientCardRepository = new InMemoryRepository<>();
+        Repository<Transaction> transactionRepository = new InMemoryRepository<>();
 
         CarService carService = new CarService(carRepository);
         ClientCardService clientCardService = new ClientCardService(clientCardRepository);

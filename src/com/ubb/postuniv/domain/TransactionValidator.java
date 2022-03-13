@@ -1,15 +1,13 @@
 package com.ubb.postuniv.domain;
 
-import com.ubb.postuniv.repository.CarRepository;
-import com.ubb.postuniv.repository.ClientCardRepository;
-import com.ubb.postuniv.repository.TransactionRepository;
+import com.ubb.postuniv.repository.Repository;
 
 public class TransactionValidator {
-    private TransactionRepository transactionRepository;
-    private CarRepository carRepository;
-    private ClientCardRepository clientCardRepository;
+    private Repository<Transaction> transactionRepository;
+    private Repository<Car> carRepository;
+    private Repository<ClientCard> clientCardRepository;
 
-    public TransactionValidator(TransactionRepository transactionRepository, CarRepository carRepository, ClientCardRepository clientCardRepository) {
+    public TransactionValidator(Repository<Transaction> transactionRepository, Repository<Car> carRepository, Repository<ClientCard> clientCardRepository) {
         this.transactionRepository = transactionRepository;
         this.carRepository = carRepository;
         this.clientCardRepository = clientCardRepository;
@@ -41,7 +39,7 @@ public class TransactionValidator {
             return;
         }
 
-        ClientCard clientCard = clientCardRepository.readById(id);
+        ClientCard clientCard = clientCardRepository.read(id);
         if (clientCard == null) {
             throw new RuntimeException("Error: There is no client card with id " + id);
         }

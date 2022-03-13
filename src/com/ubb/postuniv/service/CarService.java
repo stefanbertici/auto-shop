@@ -1,16 +1,16 @@
 package com.ubb.postuniv.service;
 
 import com.ubb.postuniv.domain.Car;
-import com.ubb.postuniv.repository.CarRepository;
+import com.ubb.postuniv.repository.Repository;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class CarService {
-    private CarRepository carRepository;
+    private Repository<Car> carRepository;
 
-    public CarService(CarRepository carRepository) {
+    public CarService(Repository<Car> carRepository) {
         this.carRepository = carRepository;
     }
 
