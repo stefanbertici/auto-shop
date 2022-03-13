@@ -25,7 +25,9 @@ public class ClientCardValidator {
 
     public void validateCnp(String cnp) throws RuntimeException {
         ClientCard card = cardRepository.readByCnp(cnp);
-        if (card != null) {
+        if (cnp.equals("")) {
+            throw new RuntimeException("Error: CNP cannot be empty string.");
+        } else if (card != null) {
             throw new RuntimeException("Error: There already is a card with cnp " + cnp);
         }
     }

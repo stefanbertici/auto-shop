@@ -38,7 +38,7 @@ public class TextUI {
 
     public void start() {
         boolean mainMenu = true;
-        boolean subMenu = false;
+        boolean subMenu;
         String input;
 
         while (mainMenu) {
@@ -221,7 +221,7 @@ public class TextUI {
             id = scanner.nextLine();
 
             try {
-                transactionValidator.validateIdForAdd(id);
+                transactionValidator.validateIdForUpdate(id);
                 break;
             } catch (RuntimeException rex) {
                 System.out.println(rex.getMessage());

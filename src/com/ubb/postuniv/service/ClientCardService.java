@@ -47,7 +47,7 @@ public class ClientCardService {
 
     public void resetCnpInCaseItDoesNotChangeAtUpdate(String id) {
         ClientCard card = cardRepository.readById(id);
-        card.setCnp("");
+        card.setCnp("-1");
         cardRepository.update(card);
     }
 
