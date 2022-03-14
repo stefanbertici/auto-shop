@@ -1,6 +1,7 @@
 package com.ubb.postuniv.service;
 
 import com.ubb.postuniv.domain.Car;
+import com.ubb.postuniv.domain.CarWithTotalLaborPrice;
 import com.ubb.postuniv.domain.Invoice;
 import com.ubb.postuniv.domain.Transaction;
 import com.ubb.postuniv.repository.Repository;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TransactionService {
@@ -97,5 +99,25 @@ public class TransactionService {
     //delete
     public void delete(String id) throws RuntimeException {
         transactionRepository.delete(id);
+    }
+
+    public List<Transaction> getAllTransactionsBetweenBounds(double lower, double upper) {
+        return transactionRepository.readAll()
+                .stream()
+                .filter(t -> t.getLaborPrice() + t.getPartPrice() >= lower)
+                .filter(t -> t.getLaborPrice() + t.getPartPrice() <= upper)
+                .collect(Collectors.toList());
+    }
+
+    public List<CarWithTotalLaborPrice> getAllCarsOrderedDescendingBySumOfLaborPrice() {
+        Map<String, Double> carIdAndLaborGroupings = transactionRepository.readAll()
+                .stream()
+                .collect(Collectors.groupingBy(Transaction::getCarId, Collectors.summingDouble(Transaction::getLaborPrice)));
+
+        return carIdAndLaborGroupings.entrySet()
+                .stream()
+                .map(e -> new CarWithTotalLaborPrice(carRepository.read(e.getKey()), e.getValue()))
+                .sorted(Comparator.comparingDouble(CarWithTotalLaborPrice::getTotalLaborPrice).reversed())
+                .collect(Collectors.toList());
     }
 }

@@ -106,6 +106,8 @@ public class TextUI {
                     }
                 }
                 case "4" -> searchCarsAndClients();
+                case "5" -> printTransactionsBetweenBounds();
+                case "6" -> printAllCarsOrderedDescendingBySumOfLaborPrice();
                 case "0" -> {
                     System.out.println("Goodbye!");
                     mainMenu = false;
@@ -113,6 +115,40 @@ public class TextUI {
                 default -> System.out.println("Error: Please choose a valid option.");
             }
         }
+    }
+
+    private void printAllCarsOrderedDescendingBySumOfLaborPrice() {
+        System.out.println("""
+                ---------------------------------------
+                | ALL CARS ORD. DESC. BY SUM OF LABOR |
+                ---------------------------------------""");
+
+        transactionService.getAllCarsOrderedDescendingBySumOfLaborPrice().forEach(System.out::println);
+    }
+
+    private void printTransactionsBetweenBounds() {
+        double lower, upper;
+
+        do {
+            try {
+                System.out.print("Enter lower bound (double): ");
+                lower = Double.parseDouble(scanner.nextLine());
+                System.out.print("Enter upper bound (double): ");
+                upper = Double.parseDouble(scanner.nextLine());
+                break;
+            } catch (NullPointerException npex) {
+                System.out.println("Error: input cannot be empty string.");
+            } catch (NumberFormatException nfex) {
+                System.out.println("Error: input needs to be a number.");
+            }
+        } while (true);
+
+        System.out.println("""
+                -------------------------------------
+                |  ALL TRANSACTIONS BETWEEN BOUNDS  |
+                -------------------------------------""");
+
+        transactionService.getAllTransactionsBetweenBounds(lower, upper).forEach(System.out::println);
     }
 
     private void searchCarsAndClients() {
@@ -130,18 +166,23 @@ public class TextUI {
 
         } while (true);
 
-        AtomicInteger count = new AtomicInteger();
+        System.out.println("""
+                -------------------------------------
+                |          SEARCH RESULTS           |
+                -------------------------------------""");
+
+        AtomicInteger resultCount = new AtomicInteger(0);
         carService.getAllCarsFullTextSearch(input).forEach(car -> {
             System.out.println(car);
-            count.getAndIncrement();
+            resultCount.getAndIncrement();
         });
 
         clientCardService.getAllClientCardsFullTextSearch(input, dateFormatter).forEach(card -> {
             System.out.println(card);
-            count.getAndIncrement();
+            resultCount.getAndIncrement();
         });
 
-        if (count.get() == 0) {
+        if (resultCount.get() == 0) {
             System.out.println("No element found for search term: " + input);
         }
     }
@@ -761,10 +802,10 @@ public class TextUI {
                 | 1. CRUD cars.                     |
                 | 2. CRUD client cards.             |
                 | 3. CRUD transactions.             |
-                | 4. Search for cars & clients      |
-                | 5.      -----------               |
-                | 6.   UNDER CONSTRUCTION           |
-                | 7.      -----------               |
+                | 4. Search for cars & clients.     |
+                | 5. Print transact. between bounds.|
+                | 6. Print cars ord. by total labor.|
+                | 7.   UNDER CONSTRUCTION           |
                 | 0. Exit.                          |
                 -------------------------------------""");
     }

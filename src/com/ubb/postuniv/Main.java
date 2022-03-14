@@ -8,6 +8,7 @@ import com.ubb.postuniv.service.TransactionService;
 import com.ubb.postuniv.userInterface.TextUI;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 
@@ -35,6 +36,10 @@ public class Main {
         carService.add("1", "yaris turbo", 2023, 0, true);
         clientCardService.add("2", "Stefan", "Bertici", "199921", LocalDate.parse("12.03.1993", dateFormatter), LocalDate.parse("01.01.2022", dateFormatter));
         clientCardService.add("1", "Yari", "Motomo", "199922", LocalDate.parse("12.03.1993", dateFormatter), LocalDate.parse("01.01.2022", dateFormatter));
+        transactionService.add("1", "2", "1", 1500d, 550d, LocalDateTime.parse("21.07.2016 09:50", dateTimeFormatter));
+        transactionService.add("2", "3", "2", 100d, 50d, LocalDateTime.parse("14.01.2022 12:13", dateTimeFormatter));
+        transactionService.add("3", "2", "1", 1000d, 300d, LocalDateTime.parse("15.02.2022 21:11", dateTimeFormatter));
+        transactionService.add("4", "1", "", 50d, 100d, LocalDateTime.parse("25.03.2022 15:13", dateTimeFormatter));
 
         ui.start();
     }
