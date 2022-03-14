@@ -1,58 +1,68 @@
 package com.ubb.postuniv.service;
 
+import com.ubb.postuniv.domain.Car;
 import com.ubb.postuniv.domain.ClientCard;
 import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClientCardService {
-    private Repository<ClientCard> cardRepository;
+    private Repository<ClientCard> clientCardRepository;
 
-    public ClientCardService(Repository<ClientCard> cardRepository) {
-        this.cardRepository = cardRepository;
+    public ClientCardService(Repository<ClientCard> clientCardRepository) {
+        this.clientCardRepository = clientCardRepository;
     }
 
     //add
     public void add(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws RuntimeException{
         ClientCard card = new ClientCard(id, firstName, lastName, cnp, birthDate, registrationDate);
-        cardRepository.create(card);
+        clientCardRepository.create(card);
     }
 
     //get all ordered by id
     public List<ClientCard> getAll() {
-        List<ClientCard> cardsById = new ArrayList<>(cardRepository.readAll());
-        cardsById.sort(new Comparator<>() {
-            @Override
-            public int compare(ClientCard o1, ClientCard o2) {
-                return o1.getId().compareTo(o2.getId());
-            }
-        });
-
-        return cardsById;
+        return clientCardRepository.readAll()
+                .stream()
+                .sorted(Comparator.comparing(ClientCard::getId))
+                .collect(Collectors.toList());
     }
 
     //get a card by id
     public ClientCard get(String id) {
-        return cardRepository.read(id);
+        return clientCardRepository.read(id);
     }
 
     //update
     public void update(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws RuntimeException{
         ClientCard card = new ClientCard(id, firstName, lastName, cnp, birthDate, registrationDate);
-        cardRepository.update(card);
+        clientCardRepository.update(card);
     }
 
     public void resetCnpInCaseItDoesNotChangeAtUpdate(String id) {
-        ClientCard card = cardRepository.read(id);
+        ClientCard card = clientCardRepository.read(id);
         card.setCnp("-1");
-        cardRepository.update(card);
+        clientCardRepository.update(card);
     }
 
     //delete
     public void delete(String id) throws RuntimeException {
-        cardRepository.delete(id);
+        clientCardRepository.delete(id);
+    }
+
+    public List<ClientCard> getAllClientCardsFullTextSearch(String searchTerm, DateTimeFormatter dateFormatter) {
+        return clientCardRepository.readAll()
+                .stream()
+                .filter(clientCard -> clientCard.getId().contains(searchTerm) ||
+                        clientCard.getFirstName().toLowerCase().contains(searchTerm) ||
+                        clientCard.getLastName().toLowerCase().contains(searchTerm) ||
+                        clientCard.getCnp().contains(searchTerm) ||
+                        clientCard.getBirthDate().format(dateFormatter).contains(searchTerm) ||
+                        clientCard.getRegistrationDate().format(dateFormatter).contains(searchTerm))
+                .collect(Collectors.toList());
     }
 }

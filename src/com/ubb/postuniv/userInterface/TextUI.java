@@ -9,7 +9,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class TextUI {
     private Scanner scanner;
@@ -101,12 +105,44 @@ public class TextUI {
                         }
                     }
                 }
+                case "4" -> searchCarsAndClients();
                 case "0" -> {
                     System.out.println("Goodbye!");
                     mainMenu = false;
                 }
                 default -> System.out.println("Error: Please choose a valid option.");
             }
+        }
+    }
+
+    private void searchCarsAndClients() {
+        String input;
+
+        do {
+            System.out.print("Enter search term: ");
+            input = scanner.nextLine();
+
+            if (input.isEmpty() || input.isBlank()) {
+                System.out.println("Error: search term cannot be null or empty spaces.");
+            } else {
+                break;
+            }
+
+        } while (true);
+
+        AtomicInteger count = new AtomicInteger();
+        carService.getAllCarsFullTextSearch(input).forEach(car -> {
+            System.out.println(car);
+            count.getAndIncrement();
+        });
+
+        clientCardService.getAllClientCardsFullTextSearch(input, dateFormatter).forEach(card -> {
+            System.out.println(card);
+            count.getAndIncrement();
+        });
+
+        if (count.get() == 0) {
+            System.out.println("No element found for search term: " + input);
         }
     }
 
@@ -725,9 +761,10 @@ public class TextUI {
                 | 1. CRUD cars.                     |
                 | 2. CRUD client cards.             |
                 | 3. CRUD transactions.             |
-                | 4.      -----------               |
-                | 5.   UNDER CONSTRUCTION           |
-                | 6.      -----------               |
+                | 4. Search for cars & clients      |
+                | 5.      -----------               |
+                | 6.   UNDER CONSTRUCTION           |
+                | 7.      -----------               |
                 | 0. Exit.                          |
                 -------------------------------------""");
     }

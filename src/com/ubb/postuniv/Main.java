@@ -30,9 +30,11 @@ public class Main {
 
         TextUI ui = new TextUI(carService, clientCardService, transactionService, carValidator, clientCardValidator, transactionValidator, dateFormatter, dateTimeFormatter);
 
-        carService.add("1", "yaris", 2022, 1000, true);
+        carService.add("3", "yaris", 2022, 1000, true);
         carService.add("2", "corolla", 2010, 90000, false);
-        clientCardService.add("1", "Stefan", "Bertici", "199921", LocalDate.parse("12.03.1993", dateFormatter), LocalDate.parse("01.01.2022", dateFormatter));
+        carService.add("1", "yaris turbo", 2023, 0, true);
+        clientCardService.add("2", "Stefan", "Bertici", "199921", LocalDate.parse("12.03.1993", dateFormatter), LocalDate.parse("01.01.2022", dateFormatter));
+        clientCardService.add("1", "Yari", "Motomo", "199922", LocalDate.parse("12.03.1993", dateFormatter), LocalDate.parse("01.01.2022", dateFormatter));
 
         ui.start();
     }

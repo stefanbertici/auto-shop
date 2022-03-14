@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TransactionService {
     private Repository<Transaction> transactionRepository;
@@ -41,15 +42,10 @@ public class TransactionService {
 
     //get all ordered by id
     public List<Transaction> getAll() {
-        List<Transaction> transactionsById = new ArrayList<>(transactionRepository.readAll());
-        transactionsById.sort(new Comparator<>() {
-            @Override
-            public int compare(Transaction o1, Transaction o2) {
-                return o1.getId().compareTo(o2.getId());
-            }
-        });
-
-        return transactionsById;
+        return transactionRepository.readAll()
+                .stream()
+                .sorted(Comparator.comparing(Transaction::getId))
+                .collect(Collectors.toList());
     }
 
     //get a car by id
