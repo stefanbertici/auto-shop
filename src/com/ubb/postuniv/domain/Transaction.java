@@ -47,7 +47,8 @@ public class Transaction extends Entity{
     @Override
     public String toString() {
         return "Transaction{" +
-                "carId='" + carId + '\'' +
+                "id='" + id + '\'' +
+                ", carId='" + carId + '\'' +
                 ", clientCardId='" + clientCardId + '\'' +
                 ", partPrice=" + partPrice +
                 ", laborPrice=" + laborPrice +

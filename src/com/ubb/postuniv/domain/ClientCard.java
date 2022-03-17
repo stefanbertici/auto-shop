@@ -50,8 +50,8 @@ public class ClientCard extends Entity{
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", cnp='" + cnp + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                ", registrationDate='" + registrationDate + '\'' +
+                ", birthDate='" + birthDate +
+                ", registrationDate='" + registrationDate +
                 '}';
     }
 }
