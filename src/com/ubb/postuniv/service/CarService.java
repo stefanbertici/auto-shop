@@ -2,10 +2,10 @@ package com.ubb.postuniv.service;
 
 import com.ubb.postuniv.domain.Car;
 import com.ubb.postuniv.domain.CarWithSumOfLaborPrice;
-import com.ubb.postuniv.domain.Entity;
 import com.ubb.postuniv.domain.Transaction;
 import com.ubb.postuniv.repository.Repository;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +41,34 @@ public class CarService {
     public void update(String id, String model, int yearOfPurchase, int km, boolean warranty) throws RuntimeException {
         Car car = new Car(id, model, yearOfPurchase, km, warranty);
         carRepository.update(car);
+    }
+
+    public int updateAllCarWarranties() {
+        LocalDate now = LocalDate.now();
+        boolean outOfWarranty = false;
+        int count = 0;
+
+        for (Car car : carRepository.readAll()) {
+            if (car.isWarranty()) {
+                if (car.getKm() >= 60000) {
+                    outOfWarranty = true;
+                }
+
+                if (now.getYear() - car.getYearOfPurchase() >= 3) {
+                    outOfWarranty = true;
+                }
+
+                if (outOfWarranty) {
+                    Car updatedCar = new Car(car.getId(), car.getModel(), car.getYearOfPurchase(), car.getKm(), false);
+                    carRepository.update(updatedCar);
+                    count++;
+                }
+
+                outOfWarranty = false;
+            }
+        }
+
+        return count;
     }
 
     //delete

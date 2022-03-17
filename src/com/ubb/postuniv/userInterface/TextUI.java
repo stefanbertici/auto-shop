@@ -9,11 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class TextUI {
     private Scanner scanner;
@@ -110,6 +107,7 @@ public class TextUI {
                 case "6" -> printCarsOrderedDescendingBySumOfLaborPrice();
                 case "7" -> printClientCardsOrderedDescendingBySumOfDiscounts();
                 case "8" -> deleteTransactionsBetweenGivenDates();
+                case "9" -> updateAllCarWarranties();
                 case "0" -> {
                     System.out.println("Goodbye!");
                     mainMenu = false;
@@ -117,6 +115,11 @@ public class TextUI {
                 default -> System.out.println("Error: Please choose a valid option.");
             }
         }
+    }
+
+    private void updateAllCarWarranties() {
+        int count = carService.updateAllCarWarranties();
+        System.out.println(count + " Car warranties updated!");
     }
 
     private void deleteTransactionsBetweenGivenDates() {
@@ -850,6 +853,7 @@ public class TextUI {
                 | 6. Print cars ord. by sum of labor.     |
                 | 7. Print cards ord. by sum of discounts.|
                 | 8. Delete transact. between bounds.     |
+                | 9. Update all car warranties.           |
                 | 0. Exit.                                |
                 -------------------------------------------""");
     }

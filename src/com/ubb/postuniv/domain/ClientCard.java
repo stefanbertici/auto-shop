@@ -1,7 +1,6 @@
 package com.ubb.postuniv.domain;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class ClientCard extends Entity{
     private String firstName;

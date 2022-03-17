@@ -34,6 +34,8 @@ public class Main {
         carService.add("3", "yaris", 2018, 10000, true);
         carService.add("2", "corolla", 2010, 90000, false);
         carService.add("1", "yaris turbo", 2023, 0, true);
+        carService.add("4", "update test car #1", 2001, 50000, true);
+        carService.add("5", "update test car #2", 2021, 80000, true);
         clientCardService.add("2", "Stefan", "Bertici", "199921", LocalDate.parse("12.03.1993", dateFormatter), LocalDate.parse("01.01.2022", dateFormatter));
         clientCardService.add("1", "Yari", "Motomo", "199922", LocalDate.parse("12.03.1993", dateFormatter), LocalDate.parse("01.01.2022", dateFormatter));
         transactionService.add("1", "2", "1", 1500d, 550d, LocalDateTime.parse("21.07.2016 09:50", dateTimeFormatter));

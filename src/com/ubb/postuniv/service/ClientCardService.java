@@ -1,6 +1,5 @@
 package com.ubb.postuniv.service;
 
-import com.ubb.postuniv.domain.Car;
 import com.ubb.postuniv.domain.ClientCard;
 import com.ubb.postuniv.domain.ClientCardWithSumOfDiscounts;
 import com.ubb.postuniv.domain.Transaction;
@@ -8,7 +7,6 @@ import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
