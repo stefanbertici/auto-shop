@@ -2,6 +2,8 @@ package com.ubb.postuniv.service;
 
 import com.ubb.postuniv.domain.Car;
 import com.ubb.postuniv.domain.ClientCard;
+import com.ubb.postuniv.domain.ClientCardWithSumOfDiscounts;
+import com.ubb.postuniv.domain.Transaction;
 import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDate;
@@ -9,13 +11,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClientCardService {
     private Repository<ClientCard> clientCardRepository;
+    private Repository<Transaction> transactionRepository;
 
-    public ClientCardService(Repository<ClientCard> clientCardRepository) {
+    public ClientCardService(Repository<ClientCard> clientCardRepository, Repository<Transaction> transactionRepository) {
         this.clientCardRepository = clientCardRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     //add
@@ -54,7 +59,8 @@ public class ClientCardService {
         clientCardRepository.delete(id);
     }
 
-    public List<ClientCard> getAllClientCardsFullTextSearch(String searchTerm, DateTimeFormatter dateFormatter) {
+    //reports
+    public List<ClientCard> getClientCardsFullTextSearch(String searchTerm, DateTimeFormatter dateFormatter) {
         return clientCardRepository.readAll()
                 .stream()
                 .filter(clientCard -> clientCard.getId().contains(searchTerm) ||
@@ -63,6 +69,19 @@ public class ClientCardService {
                         clientCard.getCnp().contains(searchTerm) ||
                         clientCard.getBirthDate().format(dateFormatter).contains(searchTerm) ||
                         clientCard.getRegistrationDate().format(dateFormatter).contains(searchTerm))
+                .collect(Collectors.toList());
+    }
+
+    public List<ClientCardWithSumOfDiscounts> getClientCardsOrderedDescendingBySumOfDiscounts() {
+        Map<String, Double> clientCardIdAndDiscountsGrouping = transactionRepository.readAll()
+                .stream()
+                .collect(Collectors.groupingBy(Transaction::getClientCardId, Collectors.summingDouble(Transaction::getAppliedDiscount)));
+
+        return clientCardIdAndDiscountsGrouping.entrySet()
+                .stream()
+                .map(e -> new ClientCardWithSumOfDiscounts(clientCardRepository.read(e.getKey()), e.getValue()))
+                .filter(c -> c.getClientCard() != null)
+                .sorted(Comparator.comparingDouble(ClientCardWithSumOfDiscounts::getSumOfDiscounts).reversed())
                 .collect(Collectors.toList());
     }
 }

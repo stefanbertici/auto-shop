@@ -1,20 +1,21 @@
 package com.ubb.postuniv.service;
 
 import com.ubb.postuniv.domain.Car;
+import com.ubb.postuniv.domain.CarWithSumOfLaborPrice;
 import com.ubb.postuniv.domain.Entity;
+import com.ubb.postuniv.domain.Transaction;
 import com.ubb.postuniv.repository.Repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CarService {
     private Repository<Car> carRepository;
+    private Repository<Transaction> transactionRepository;
 
-    public CarService(Repository<Car> carRepository) {
+    public CarService(Repository<Car> carRepository, Repository<Transaction> transactionRepository) {
         this.carRepository = carRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     //add
@@ -47,13 +48,26 @@ public class CarService {
         carRepository.delete(id);
     }
 
-    public List<Car> getAllCarsFullTextSearch(String searchTerm) {
+    //reports
+    public List<Car> getCarsFullTextSearch(String searchTerm) {
         return carRepository.readAll()
                 .stream()
                 .filter(car -> car.getId().toLowerCase().contains(searchTerm) ||
                         car.getModel().toLowerCase().contains(searchTerm) ||
                         String.valueOf(car.getYearOfPurchase()).contains(searchTerm) ||
                         String.valueOf(car.getKm()).contains(searchTerm))
+                .collect(Collectors.toList());
+    }
+
+    public List<CarWithSumOfLaborPrice> getCarsOrderedDescendingBySumOfLaborPrice() {
+        Map<String, Double> carIdAndLaborGroupings = transactionRepository.readAll()
+                .stream()
+                .collect(Collectors.groupingBy(Transaction::getCarId, Collectors.summingDouble(Transaction::getLaborPrice)));
+
+        return carIdAndLaborGroupings.entrySet()
+                .stream()
+                .map(e -> new CarWithSumOfLaborPrice(carRepository.read(e.getKey()), e.getValue()))
+                .sorted(Comparator.comparingDouble(CarWithSumOfLaborPrice::getTotalLaborPrice).reversed())
                 .collect(Collectors.toList());
     }
 }

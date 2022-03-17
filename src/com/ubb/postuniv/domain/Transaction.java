@@ -8,14 +8,16 @@ public class Transaction extends Entity{
     private double partPrice;
     private double laborPrice;
     private LocalDateTime dateAndTime;
+    private double appliedDiscount;
 
-    public Transaction(String id, String carId,String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime) {
+    public Transaction(String id, String carId,String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime, double appliedDiscount) {
         super(id);
         this.carId = carId;
         this.clientCardId = clientCardId;
         this.partPrice = partPrice;
         this.laborPrice = laborPrice;
         this.dateAndTime = dateAndTime;
+        this.appliedDiscount = appliedDiscount;
     }
 
     public String getCarId() {
@@ -38,15 +40,19 @@ public class Transaction extends Entity{
         return dateAndTime;
     }
 
+    public double getAppliedDiscount() {
+        return appliedDiscount;
+    }
+
     @Override
     public String toString() {
         return "Transaction{" +
-                "id='" + id + '\'' +
-                ", carId='" + carId + '\'' +
+                "carId='" + carId + '\'' +
                 ", clientCardId='" + clientCardId + '\'' +
                 ", partPrice=" + partPrice +
                 ", laborPrice=" + laborPrice +
                 ", dateAndTime=" + dateAndTime +
+                ", appliedDiscount=" + appliedDiscount +
                 '}';
     }
 }

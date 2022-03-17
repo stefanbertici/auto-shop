@@ -1,13 +1,9 @@
 package com.ubb.postuniv.service;
 
-import com.ubb.postuniv.domain.Car;
-import com.ubb.postuniv.domain.CarWithTotalLaborPrice;
-import com.ubb.postuniv.domain.Invoice;
-import com.ubb.postuniv.domain.Transaction;
+import com.ubb.postuniv.domain.*;
 import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +34,9 @@ public class TransactionService {
             finalLaborPrice = laborPrice;
         }
 
-        Transaction transaction = new Transaction(id, carId, clientCardId, finalPartPrice, finalLaborPrice, dateAndTime);
+        double appliedDiscount = partPrice - finalPartPrice + laborPrice - finalLaborPrice;
+
+        Transaction transaction = new Transaction(id, carId, clientCardId, finalPartPrice, finalLaborPrice, dateAndTime, appliedDiscount);
         transactionRepository.create(transaction);
     }
 
@@ -80,20 +78,24 @@ public class TransactionService {
 
     //update
     public void update(String id, String carId, String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime) throws RuntimeException{
-        double laborPriceWithDiscount = laborPrice;
-        if (!clientCardId.equals("")) {
-            laborPriceWithDiscount = laborPrice * 0.9;
-        }
+        double finalPartPrice, finalLaborPrice;
 
-        double partPriceWithDiscount = partPrice;
         if (carRepository.read(carId).isWarranty()) {
-            partPriceWithDiscount = 0;
+            finalPartPrice = 0;
+        } else {
+            finalPartPrice = partPrice;
         }
 
-        Transaction transaction = new Transaction(id, carId, clientCardId, partPriceWithDiscount, laborPriceWithDiscount, dateAndTime);
-        transactionRepository.update(transaction);
+        if (!clientCardId.equals("")) {
+            finalLaborPrice = laborPrice * 0.9;
+        } else {
+            finalLaborPrice = laborPrice;
+        }
 
-        System.out.println("Total = " + (laborPriceWithDiscount + partPriceWithDiscount) + ", discount = " + (laborPrice - laborPriceWithDiscount + partPrice - partPriceWithDiscount));
+        double appliedDiscount = partPrice - finalPartPrice + laborPrice - finalLaborPrice;
+
+        Transaction transaction = new Transaction(id, carId, clientCardId, finalPartPrice, finalLaborPrice, dateAndTime, appliedDiscount);
+        transactionRepository.update(transaction);
     }
 
     //delete
@@ -101,23 +103,24 @@ public class TransactionService {
         transactionRepository.delete(id);
     }
 
-    public List<Transaction> getAllTransactionsBetweenBounds(double lower, double upper) {
+    public int deleteTransactionsBetweenGivenBounds(LocalDateTime lowerBoundDate, LocalDateTime upperBoundDate) {
+        List<String> idsOfTransactionsToDelete = transactionRepository.readAll()
+                .stream()
+                .filter(t -> t.getDateAndTime().isAfter(lowerBoundDate))
+                .filter(t -> t.getDateAndTime().isBefore(upperBoundDate))
+                .map(Transaction::getId)
+                .collect(Collectors.toList());
+
+        idsOfTransactionsToDelete.forEach(id -> transactionRepository.delete(id));
+        return idsOfTransactionsToDelete.size();
+    }
+
+    //reports
+    public List<Transaction> getTransactionsBetweenBounds(double lower, double upper) {
         return transactionRepository.readAll()
                 .stream()
                 .filter(t -> t.getLaborPrice() + t.getPartPrice() >= lower)
                 .filter(t -> t.getLaborPrice() + t.getPartPrice() <= upper)
-                .collect(Collectors.toList());
-    }
-
-    public List<CarWithTotalLaborPrice> getAllCarsOrderedDescendingBySumOfLaborPrice() {
-        Map<String, Double> carIdAndLaborGroupings = transactionRepository.readAll()
-                .stream()
-                .collect(Collectors.groupingBy(Transaction::getCarId, Collectors.summingDouble(Transaction::getLaborPrice)));
-
-        return carIdAndLaborGroupings.entrySet()
-                .stream()
-                .map(e -> new CarWithTotalLaborPrice(carRepository.read(e.getKey()), e.getValue()))
-                .sorted(Comparator.comparingDouble(CarWithTotalLaborPrice::getTotalLaborPrice).reversed())
                 .collect(Collectors.toList());
     }
 }

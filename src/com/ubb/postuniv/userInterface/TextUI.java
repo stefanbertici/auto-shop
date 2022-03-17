@@ -107,7 +107,9 @@ public class TextUI {
                 }
                 case "4" -> searchCarsAndClients();
                 case "5" -> printTransactionsBetweenBounds();
-                case "6" -> printAllCarsOrderedDescendingBySumOfLaborPrice();
+                case "6" -> printCarsOrderedDescendingBySumOfLaborPrice();
+                case "7" -> printClientCardsOrderedDescendingBySumOfDiscounts();
+                case "8" -> deleteTransactionsBetweenGivenDates();
                 case "0" -> {
                     System.out.println("Goodbye!");
                     mainMenu = false;
@@ -117,13 +119,54 @@ public class TextUI {
         }
     }
 
-    private void printAllCarsOrderedDescendingBySumOfLaborPrice() {
+    private void deleteTransactionsBetweenGivenDates() {
+        LocalDateTime lowerBoundDate, upperBoundDate;
+        String input;
+
+        do {
+            System.out.print("Enter the lower bound date and time (\"dd.mm.yyyy HH:mm\"): ");
+            input = scanner.nextLine();
+
+            try {
+                lowerBoundDate = LocalDateTime.parse(input, dateTimeFormatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid date and time format (\"dd.mm.yyyy HH:mm\"): " + input);
+            }
+        } while (true);
+
+        do {
+            System.out.print("Enter the upper bound date and time (\"dd.mm.yyyy HH:mm\"): ");
+            input = scanner.nextLine();
+
+            try {
+                upperBoundDate = LocalDateTime.parse(input, dateTimeFormatter);
+                break;
+            } catch (DateTimeParseException dtpex) {
+                System.out.println("Error: Invalid date and time format (\"dd.mm.yyyy HH:mm\"): " + input);
+            }
+        } while (true);
+
+        int count = transactionService.deleteTransactionsBetweenGivenBounds(lowerBoundDate, upperBoundDate);
+        System.out.println(count + " Transactions deleted!");
+    }
+
+    private void printClientCardsOrderedDescendingBySumOfDiscounts() {
+        System.out.println("""
+                ---------------------------------------------------
+                | ALL CLIENT CARDS ORD. DESC. BY SUM OF DISCOUNTS |
+                ---------------------------------------------------""");
+
+        clientCardService.getClientCardsOrderedDescendingBySumOfDiscounts().forEach(System.out::println);
+    }
+
+    private void printCarsOrderedDescendingBySumOfLaborPrice() {
         System.out.println("""
                 ---------------------------------------
                 | ALL CARS ORD. DESC. BY SUM OF LABOR |
                 ---------------------------------------""");
 
-        transactionService.getAllCarsOrderedDescendingBySumOfLaborPrice().forEach(System.out::println);
+        carService.getCarsOrderedDescendingBySumOfLaborPrice().forEach(System.out::println);
     }
 
     private void printTransactionsBetweenBounds() {
@@ -148,7 +191,7 @@ public class TextUI {
                 |  ALL TRANSACTIONS BETWEEN BOUNDS  |
                 -------------------------------------""");
 
-        transactionService.getAllTransactionsBetweenBounds(lower, upper).forEach(System.out::println);
+        transactionService.getTransactionsBetweenBounds(lower, upper).forEach(System.out::println);
     }
 
     private void searchCarsAndClients() {
@@ -172,12 +215,12 @@ public class TextUI {
                 -------------------------------------""");
 
         AtomicInteger resultCount = new AtomicInteger(0);
-        carService.getAllCarsFullTextSearch(input).forEach(car -> {
+        carService.getCarsFullTextSearch(input).forEach(car -> {
             System.out.println(car);
             resultCount.getAndIncrement();
         });
 
-        clientCardService.getAllClientCardsFullTextSearch(input, dateFormatter).forEach(card -> {
+        clientCardService.getClientCardsFullTextSearch(input, dateFormatter).forEach(card -> {
             System.out.println(card);
             resultCount.getAndIncrement();
         });
@@ -796,18 +839,19 @@ public class TextUI {
 
     public void printMainMenu() {
         System.out.println("""
-                -------------------------------------
-                |             MAIN MENU             |
-                -------------------------------------
-                | 1. CRUD cars.                     |
-                | 2. CRUD client cards.             |
-                | 3. CRUD transactions.             |
-                | 4. Search for cars & clients.     |
-                | 5. Print transact. between bounds.|
-                | 6. Print cars ord. by total labor.|
-                | 7.   UNDER CONSTRUCTION           |
-                | 0. Exit.                          |
-                -------------------------------------""");
+                -------------------------------------------
+                |                MAIN MENU                |
+                -------------------------------------------
+                | 1. CRUD cars.                           |
+                | 2. CRUD client cards.                   |
+                | 3. CRUD transactions.                   |
+                | 4. Search for cars & clients.           |
+                | 5. Print transact. between bounds.      |
+                | 6. Print cars ord. by sum of labor.     |
+                | 7. Print cards ord. by sum of discounts.|
+                | 8. Delete transact. between bounds.     |
+                | 0. Exit.                                |
+                -------------------------------------------""");
     }
 
     public void printCarSubMenu() {
