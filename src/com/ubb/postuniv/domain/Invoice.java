@@ -1,12 +1,12 @@
 package com.ubb.postuniv.domain;
 
 public class Invoice {
-    private double partPrice;
-    private double laborPrice;
-    private double partDiscount;
-    private double laborDiscount;
-    private double finalPartPrice;
-    private double finalLaborPrice;
+    private final double partPrice;
+    private final double laborPrice;
+    private final double partDiscount;
+    private final double laborDiscount;
+    private final double finalPartPrice;
+    private final double finalLaborPrice;
 
     public Invoice(double partPrice, double laborPrice, double partDiscount, double laborDiscount, double finalPartPrice, double finalLaborPrice) {
         this.partPrice = partPrice;

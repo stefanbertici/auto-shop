@@ -3,6 +3,7 @@ package com.ubb.postuniv.service;
 import com.ubb.postuniv.domain.ClientCard;
 import com.ubb.postuniv.domain.ClientCardWithSumOfDiscounts;
 import com.ubb.postuniv.domain.Transaction;
+import com.ubb.postuniv.exceptions.IdProblemException;
 import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDate;
@@ -13,8 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClientCardService {
-    private Repository<ClientCard> clientCardRepository;
-    private Repository<Transaction> transactionRepository;
+    private final Repository<ClientCard> clientCardRepository;
+    private final Repository<Transaction> transactionRepository;
 
     public ClientCardService(Repository<ClientCard> clientCardRepository, Repository<Transaction> transactionRepository) {
         this.clientCardRepository = clientCardRepository;
@@ -22,7 +23,7 @@ public class ClientCardService {
     }
 
     //add
-    public void add(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws RuntimeException{
+    public void add(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws IdProblemException {
         ClientCard card = new ClientCard(id, firstName, lastName, cnp, birthDate, registrationDate);
         clientCardRepository.create(card);
     }
@@ -41,19 +42,19 @@ public class ClientCardService {
     }
 
     //update
-    public void update(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws RuntimeException{
+    public void update(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) throws IdProblemException {
         ClientCard card = new ClientCard(id, firstName, lastName, cnp, birthDate, registrationDate);
         clientCardRepository.update(card);
     }
 
-    public void resetCnpInCaseItDoesNotChangeAtUpdate(String id) {
+    public void resetCnpInCaseItDoesNotChangeAtUpdate(String id) throws IdProblemException {
         ClientCard card = clientCardRepository.read(id);
         card.setCnp("-1");
         clientCardRepository.update(card);
     }
 
     //delete
-    public void delete(String id) throws RuntimeException {
+    public void delete(String id) throws IdProblemException {
         clientCardRepository.delete(id);
     }
 

@@ -3,11 +3,11 @@ package com.ubb.postuniv.domain;
 import java.time.LocalDate;
 
 public class ClientCard extends Entity{
-    private String firstName;
-    private String lastName;
+    private final String firstName;
+    private final String lastName;
     private String cnp;
-    private LocalDate birthDate;
-    private LocalDate registrationDate;
+    private final LocalDate birthDate;
+    private final LocalDate registrationDate;
 
     public ClientCard(String id, String firstName, String lastName, String cnp, LocalDate birthDate, LocalDate registrationDate) {
         super(id);

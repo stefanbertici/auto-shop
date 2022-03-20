@@ -1,8 +1,8 @@
 package com.ubb.postuniv.domain;
 
 public class ClientCardWithSumOfDiscounts {
-    private ClientCard clientCard;
-    private double sumOfDiscounts;
+    private final ClientCard clientCard;
+    private final double sumOfDiscounts;
 
     public ClientCardWithSumOfDiscounts(ClientCard clientCard, double sumOfDiscounts) {
         this.clientCard = clientCard;

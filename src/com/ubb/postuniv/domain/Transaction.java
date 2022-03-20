@@ -3,12 +3,12 @@ package com.ubb.postuniv.domain;
 import java.time.LocalDateTime;
 
 public class Transaction extends Entity{
-    private String carId;
-    private String clientCardId;
-    private double partPrice;
-    private double laborPrice;
-    private LocalDateTime dateAndTime;
-    private double appliedDiscount;
+    private final String carId;
+    private final String clientCardId;
+    private final double partPrice;
+    private final double laborPrice;
+    private final LocalDateTime dateAndTime;
+    private final double appliedDiscount;
 
     public Transaction(String id, String carId,String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime, double appliedDiscount) {
         super(id);

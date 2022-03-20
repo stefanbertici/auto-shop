@@ -1,8 +1,8 @@
 package com.ubb.postuniv.domain;
 
 public class CarWithSumOfLaborPrice {
-    private Car car;
-    private double sumOfLaborPrice;
+    private final Car car;
+    private final double sumOfLaborPrice;
 
     public CarWithSumOfLaborPrice(Car car, double sumOfLaborPrice) {
         this.car = car;

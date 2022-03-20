@@ -3,6 +3,7 @@ package com.ubb.postuniv.service;
 import com.ubb.postuniv.domain.Car;
 import com.ubb.postuniv.domain.CarWithSumOfLaborPrice;
 import com.ubb.postuniv.domain.Transaction;
+import com.ubb.postuniv.exceptions.IdProblemException;
 import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDate;
@@ -11,8 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class CarService {
-    private Repository<Car> carRepository;
-    private Repository<Transaction> transactionRepository;
+    private final Repository<Car> carRepository;
+    private final Repository<Transaction> transactionRepository;
 
     public CarService(Repository<Car> carRepository, Repository<Transaction> transactionRepository) {
         this.carRepository = carRepository;
@@ -20,7 +21,7 @@ public class CarService {
     }
 
     //add
-    public void add(String id, String model, int yearOfPurchase, int km, boolean warranty) throws RuntimeException {
+    public void add(String id, String model, int yearOfPurchase, int km, boolean warranty) throws IdProblemException {
         Car car = new Car(id, model, yearOfPurchase, km, warranty);
         carRepository.create(car);
     }
@@ -39,14 +40,13 @@ public class CarService {
     }
 
     //update
-    public void update(String id, String model, int yearOfPurchase, int km, boolean warranty) throws RuntimeException {
+    public void update(String id, String model, int yearOfPurchase, int km, boolean warranty) throws IdProblemException {
         Car car = new Car(id, model, yearOfPurchase, km, warranty);
         carRepository.update(car);
     }
 
-    public int updateAllCarWarranties() {
+    public int updateAllCarWarranties() throws IdProblemException {
         LocalDate now = LocalDate.now();
-        boolean outOfWarranty = false;
         AtomicInteger count = new AtomicInteger(0);
 
         carRepository.readAll()
@@ -62,7 +62,7 @@ public class CarService {
     }
 
     //delete
-    public void delete(String id) throws RuntimeException {
+    public void delete(String id) throws IdProblemException {
         carRepository.delete(id);
     }
 

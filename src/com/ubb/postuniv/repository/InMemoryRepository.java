@@ -1,6 +1,7 @@
 package com.ubb.postuniv.repository;
 
 import com.ubb.postuniv.domain.Entity;
+import com.ubb.postuniv.exceptions.IdProblemException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,16 +9,16 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryRepository<TEntity extends Entity> implements Repository<TEntity>{
-    private Map<String, TEntity> entities;
+    private final Map<String, TEntity> entities;
 
     public InMemoryRepository() {
         entities = new HashMap<>();
     }
 
     @Override
-    public void create(TEntity entity) {
+    public void create(TEntity entity) throws IdProblemException {
         if (entities.containsKey(entity.getId())) {
-            throw new RuntimeException("Error: There already is an entity with id " + entity.getId());
+            throw new IdProblemException("Error: There already is an entity with id " + entity.getId());
         } else {
             entities.put(entity.getId(), entity);
         }
@@ -34,20 +35,20 @@ public class InMemoryRepository<TEntity extends Entity> implements Repository<TE
     }
 
     @Override
-    public void update(TEntity entity) {
+    public void update(TEntity entity) throws IdProblemException {
         if (entities.containsKey(entity.getId())) {
             entities.put(entity.getId(), entity);
         } else {
-            throw new RuntimeException("Error: There is no entity with id " + entity.getId());
+            throw new IdProblemException("Error: There is no entity with id " + entity.getId());
         }
     }
 
     @Override
-    public void delete(String idEntity) {
+    public void delete(String idEntity) throws IdProblemException {
         if (entities.containsKey(idEntity)) {
             entities.remove(idEntity);
         } else {
-            throw new RuntimeException("Error: There is no entity with id " + idEntity);
+            throw new IdProblemException("Error: There is no entity with id " + idEntity);
         }
     }
 }

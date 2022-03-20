@@ -1,6 +1,9 @@
 package com.ubb.postuniv.userInterface;
 
 import com.ubb.postuniv.domain.*;
+import com.ubb.postuniv.exceptions.InvalidValueException;
+import com.ubb.postuniv.exceptions.IdProblemException;
+import com.ubb.postuniv.exceptions.StringFormatException;
 import com.ubb.postuniv.service.CarService;
 import com.ubb.postuniv.service.ClientCardService;
 import com.ubb.postuniv.service.TransactionService;
@@ -13,15 +16,15 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TextUI {
-    private Scanner scanner;
-    private CarService carService;
-    private ClientCardService clientCardService;
-    private TransactionService transactionService;
-    private CarValidator carValidator;
-    private ClientCardValidator clientCardValidator;
-    private TransactionValidator transactionValidator;
-    private DateTimeFormatter dateFormatter;
-    private DateTimeFormatter dateTimeFormatter;
+    private final Scanner scanner;
+    private final CarService carService;
+    private final ClientCardService clientCardService;
+    private final TransactionService transactionService;
+    private final CarValidator carValidator;
+    private final ClientCardValidator clientCardValidator;
+    private final TransactionValidator transactionValidator;
+    private final DateTimeFormatter dateFormatter;
+    private final DateTimeFormatter dateTimeFormatter;
 
     public TextUI(CarService carService, ClientCardService clientCardService, TransactionService transactionService,
                   CarValidator carValidator, ClientCardValidator clientCardValidator, TransactionValidator transactionValidator,
@@ -118,7 +121,13 @@ public class TextUI {
     }
 
     private void updateAllCarWarranties() {
-        int count = carService.updateAllCarWarranties();
+        int count = 0;
+        try {
+            count = carService.updateAllCarWarranties();
+        } catch (IdProblemException ipex) {
+            System.out.println(ipex.getMessage());
+        }
+
         System.out.println(count + " Car warranties updated!");
     }
 
@@ -150,7 +159,13 @@ public class TextUI {
             }
         } while (true);
 
-        int count = transactionService.deleteTransactionsBetweenGivenBounds(lowerBoundDate, upperBoundDate);
+        int count = 0;
+        try {
+            count = transactionService.deleteTransactionsBetweenGivenBounds(lowerBoundDate, upperBoundDate);
+        } catch (IdProblemException ipex) {
+            System.out.println(ipex.getMessage());
+        }
+
         System.out.println(count + " Transactions deleted!");
     }
 
@@ -243,8 +258,8 @@ public class TextUI {
             try {
                 transactionValidator.validateIdForAdd(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -264,8 +279,8 @@ public class TextUI {
             try {
                 transactionValidator.validateIdForUpdate(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -276,8 +291,8 @@ public class TextUI {
             try {
                 transactionValidator.validateCarId(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -288,8 +303,8 @@ public class TextUI {
             try {
                 transactionValidator.validateClientCardIdWhichCanBeNull(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -345,8 +360,8 @@ public class TextUI {
             try {
                 transactionValidator.validateIdForUpdate(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -374,8 +389,8 @@ public class TextUI {
             try {
                 transactionValidator.validateIdForAdd(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -386,8 +401,8 @@ public class TextUI {
             try {
                 transactionValidator.validateCarId(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -398,8 +413,8 @@ public class TextUI {
             try {
                 transactionValidator.validateClientCardIdWhichCanBeNull(clientCardId);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -455,8 +470,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateIdForUpdate(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -476,8 +491,8 @@ public class TextUI {
                 clientCardValidator.validateIdForUpdate(id);
                 clientCardService.resetCnpInCaseItDoesNotChangeAtUpdate(id); // if we update a client card but want to keep its own cnp
                 break;                                                       // we need to reset the cnp so the old one passes validator
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -488,8 +503,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateNameFormat(firstName);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException sfex) {
+                System.out.println(sfex.getMessage());
             }
         } while (true);
 
@@ -500,8 +515,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateNameFormat(lastName);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException sfex) {
+                System.out.println(sfex.getMessage());
             }
         } while (true);
 
@@ -512,8 +527,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateCnp(cnp);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException | IdProblemException e) {
+                System.out.println(e.getMessage());
             }
         } while (true);
 
@@ -555,8 +570,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateIdForUpdate(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -587,8 +602,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateIdForAdd(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -599,8 +614,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateNameFormat(firstName);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException sfex) {
+                System.out.println(sfex.getMessage());
             }
         } while (true);
 
@@ -611,8 +626,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateNameFormat(lastName);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException sfex) {
+                System.out.println(sfex.getMessage());
             }
         } while (true);
 
@@ -623,8 +638,8 @@ public class TextUI {
             try {
                 clientCardValidator.validateCnp(cnp);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException | IdProblemException e) {
+                System.out.println(e.getMessage());
             }
         } while (true);
 
@@ -666,8 +681,8 @@ public class TextUI {
             try {
                 carValidator.validateIdForUpdate(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -687,8 +702,8 @@ public class TextUI {
             try {
                 carValidator.validateIdForUpdate(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -699,8 +714,8 @@ public class TextUI {
             try {
                 carValidator.validateModelFormat(model);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException sfex) {
+                System.out.println(sfex.getMessage());
             }
         } while (true);
 
@@ -714,8 +729,8 @@ public class TextUI {
                 break;
             } catch (NumberFormatException nfex) {
                 System.out.println("Error: Invalid year format (needs to be a positive integer): " + input);
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (InvalidValueException ivex) {
+                System.out.println(ivex.getMessage());
             }
         } while (true);
 
@@ -729,8 +744,8 @@ public class TextUI {
                 break;
             } catch (NumberFormatException nfex) {
                 System.out.println("Error: Invalid number format (needs to be a positive integer): " + input);
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (InvalidValueException ivex) {
+                System.out.println(ivex.getMessage());
             }
         } while (true);
 
@@ -752,8 +767,8 @@ public class TextUI {
             try {
                 carValidator.validateIdForUpdate(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -785,8 +800,8 @@ public class TextUI {
             try {
                 carValidator.validateIdForAdd(id);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (IdProblemException ipex) {
+                System.out.println(ipex.getMessage());
             }
         } while (true);
 
@@ -797,8 +812,8 @@ public class TextUI {
             try {
                 carValidator.validateModelFormat(model);
                 break;
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (StringFormatException sfex) {
+                System.out.println(sfex.getMessage());
             }
         } while (true);
 
@@ -812,8 +827,8 @@ public class TextUI {
                 break;
             } catch (NumberFormatException nfex) {
                 System.out.println("Error: Invalid year format (needs to be a positive integer): " + input);
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (InvalidValueException ivex) {
+                System.out.println(ivex.getMessage());
             }
         } while (true);
 
@@ -827,8 +842,8 @@ public class TextUI {
                 break;
             } catch (NumberFormatException nfex) {
                 System.out.println("Error: Invalid number format (needs to be a positive integer): " + input);
-            } catch (RuntimeException rex) {
-                System.out.println(rex.getMessage());
+            } catch (InvalidValueException ivex) {
+                System.out.println(ivex.getMessage());
             }
         } while (true);
 

@@ -1,6 +1,7 @@
 package com.ubb.postuniv.service;
 
 import com.ubb.postuniv.domain.*;
+import com.ubb.postuniv.exceptions.IdProblemException;
 import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDateTime;
@@ -9,8 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TransactionService {
-    private Repository<Transaction> transactionRepository;
-    private Repository<Car> carRepository;
+    private final Repository<Transaction> transactionRepository;
+    private final Repository<Car> carRepository;
 
     public TransactionService(Repository<Transaction> transactionRepository, Repository<Car> carRepository) {
         this.transactionRepository = transactionRepository;
@@ -18,7 +19,7 @@ public class TransactionService {
     }
 
     //add
-    public void add(String id, String carId, String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime) throws RuntimeException{
+    public void add(String id, String carId, String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime) throws IdProblemException {
         double finalPartPrice, finalLaborPrice;
 
         if (carRepository.read(carId).isWarranty()) {
@@ -76,7 +77,7 @@ public class TransactionService {
     }
 
     //update
-    public void update(String id, String carId, String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime) throws RuntimeException{
+    public void update(String id, String carId, String clientCardId, double partPrice, double laborPrice, LocalDateTime dateAndTime) throws IdProblemException {
         double finalPartPrice, finalLaborPrice;
 
         if (carRepository.read(carId).isWarranty()) {
@@ -98,11 +99,11 @@ public class TransactionService {
     }
 
     //delete
-    public void delete(String id) throws RuntimeException {
+    public void delete(String id) throws IdProblemException {
         transactionRepository.delete(id);
     }
 
-    public int deleteTransactionsBetweenGivenBounds(LocalDateTime lowerBoundDate, LocalDateTime upperBoundDate) {
+    public int deleteTransactionsBetweenGivenBounds(LocalDateTime lowerBoundDate, LocalDateTime upperBoundDate) throws IdProblemException {
         List<String> idsOfTransactionsToDelete = transactionRepository.readAll()
                 .stream()
                 .filter(t -> t.getDateAndTime().isAfter(lowerBoundDate))
