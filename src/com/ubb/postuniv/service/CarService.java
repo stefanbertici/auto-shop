@@ -7,6 +7,7 @@ import com.ubb.postuniv.repository.Repository;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class CarService {
@@ -46,29 +47,18 @@ public class CarService {
     public int updateAllCarWarranties() {
         LocalDate now = LocalDate.now();
         boolean outOfWarranty = false;
-        int count = 0;
+        AtomicInteger count = new AtomicInteger(0);
 
-        for (Car car : carRepository.readAll()) {
-            if (car.isWarranty()) {
-                if (car.getKm() >= 60000) {
-                    outOfWarranty = true;
-                }
+        carRepository.readAll()
+                .stream()
+                .filter(Car::isWarranty)
+                .filter(car -> (car.getKm() >= 60000) || (now.getYear() - car.getYearOfPurchase() >= 3))
+                .forEach(car -> {
+                        carRepository.update(new Car(car.getId(), car.getModel(), car.getYearOfPurchase(), car.getKm(), false));
+                        count.getAndIncrement();
+                });
 
-                if (now.getYear() - car.getYearOfPurchase() >= 3) {
-                    outOfWarranty = true;
-                }
-
-                if (outOfWarranty) {
-                    Car updatedCar = new Car(car.getId(), car.getModel(), car.getYearOfPurchase(), car.getKm(), false);
-                    carRepository.update(updatedCar);
-                    count++;
-                }
-
-                outOfWarranty = false;
-            }
-        }
-
-        return count;
+        return count.get();
     }
 
     //delete
