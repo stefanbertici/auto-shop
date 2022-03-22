@@ -27,7 +27,7 @@ public class CarValidator {
     }
 
     public void validateModelFormat(String input) throws StringFormatException {
-        if (input.equals("")) {
+        if (input.isBlank()) {
             throw new StringFormatException("Error: Model cannot be empty string.");
         }
     }

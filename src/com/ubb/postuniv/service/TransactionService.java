@@ -108,10 +108,9 @@ public class TransactionService {
                 .stream()
                 .filter(t -> t.getDateAndTime().isAfter(lowerBoundDate))
                 .filter(t -> t.getDateAndTime().isBefore(upperBoundDate))
-                .map(Transaction::getId)
-                .collect(Collectors.toList());
+                .map(Transaction::getId).toList();
 
-        idsOfTransactionsToDelete.forEach(id -> transactionRepository.delete(id));
+        idsOfTransactionsToDelete.forEach(transactionRepository::delete);
         return idsOfTransactionsToDelete.size();
     }
 

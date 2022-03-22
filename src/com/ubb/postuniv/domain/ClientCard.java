@@ -1,6 +1,8 @@
 package com.ubb.postuniv.domain;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 
 public class ClientCard extends Entity{
     private final String firstName;
@@ -44,13 +46,14 @@ public class ClientCard extends Entity{
 
     @Override
     public String toString() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu").withResolverStyle(ResolverStyle.STRICT);
         return "ClientCard{" +
                 "id='" + id + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", cnp='" + cnp + '\'' +
-                ", birthDate='" + birthDate +
-                ", registrationDate='" + registrationDate +
+                ", birthDate='" + birthDate.format(dateFormatter) + '\'' +
+                ", registrationDate='" + registrationDate.format(dateFormatter) + '\'' +
                 '}';
     }
 }

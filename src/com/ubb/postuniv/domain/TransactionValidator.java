@@ -36,7 +36,7 @@ public class TransactionValidator {
     }
 
     public  void validateClientCardIdWhichCanBeNull(String id) throws IdProblemException {
-        if (id.equals("")) { // valid input
+        if (id.isBlank()) { // valid input
             return;
         }
 

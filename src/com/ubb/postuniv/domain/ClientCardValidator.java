@@ -26,7 +26,7 @@ public class ClientCardValidator {
     }
 
     public void validateCnp(String cnp) throws StringFormatException, IdProblemException {
-        if (cnp.equals("")) {
+        if (cnp.isBlank()) {
             throw new StringFormatException("Error: CNP cannot be empty string.");
         }
 
@@ -41,7 +41,7 @@ public class ClientCardValidator {
     }
 
     public void validateNameFormat(String name) throws StringFormatException {
-        if (name.equals("")) {
+        if (name.isBlank()) {
             throw new StringFormatException("Error: Name cannot be empty string.");
         }
     }

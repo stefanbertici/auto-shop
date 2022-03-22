@@ -1,6 +1,8 @@
 package com.ubb.postuniv.domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 
 public class Transaction extends Entity{
     private final String carId;
@@ -46,13 +48,14 @@ public class Transaction extends Entity{
 
     @Override
     public String toString() {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu HH:mm").withResolverStyle(ResolverStyle.STRICT);
         return "Transaction{" +
                 "id='" + id + '\'' +
                 ", carId='" + carId + '\'' +
                 ", clientCardId='" + clientCardId + '\'' +
                 ", partPrice=" + partPrice +
                 ", laborPrice=" + laborPrice +
-                ", dateAndTime=" + dateAndTime +
+                ", dateAndTime='" + dateAndTime.format(dateTimeFormatter) + '\'' +
                 ", appliedDiscount=" + appliedDiscount +
                 '}';
     }

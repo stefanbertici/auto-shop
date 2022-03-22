@@ -855,7 +855,7 @@ public class TextUI {
         System.out.println("Added!");
     }
 
-    public void printMainMenu() {
+    private void printMainMenu() {
         System.out.println("""
                 -------------------------------------------
                 |                MAIN MENU                |
@@ -873,7 +873,7 @@ public class TextUI {
                 -------------------------------------------""");
     }
 
-    public void printCarSubMenu() {
+    private void printCarSubMenu() {
         System.out.println("""
                 -------------------------------------
                 |             CAR MENU              |
